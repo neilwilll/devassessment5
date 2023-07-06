@@ -11,6 +11,46 @@ const sequelize = new Sequelize(CONNECTION_STRING, {
 })
 
 module.exports = {
+    getCountries: (req, res) => {
+        sequelize.query(`
+            SELECT * FROM countries
+        `).then(dbRes => {
+            res.status(200).send(dbRes[0])
+        }).catch(err => console.log('error gettingCountries', err))
+    },
+
+    createCity: (req,res) => {
+        const {name, rating, countryId} = req.body 
+
+        sequelize.query(`
+            INSERT INTO cities (name, rating, country_Id)
+            VALUES ('${name}', ${rating}, ${countryId})
+        `).then(dbRes => {
+            res.status(200).send(dbRes[0])
+        }).catch(err => console.log('error creatingCity', err))
+    },
+
+    getCities: (req, res) => {
+        sequelize.query(`
+            SELECT cities.city_id, cities.name AS city, cities.rating, countries.country_id, countries.name AS country
+            FROM cities
+            JOIN countries ON cities.country_id = countries.country_id
+        `).then(dbRes => {
+            res.status(200).send(dbRes[0])
+        }).catch(err => console.log('error gettingCities', err))
+    },
+
+    deleteCity: (req,res) => {
+        const {id} = req.params 
+
+        sequelize.query(`
+            
+        `).then(dbRes => {
+            res.status(200).send(dbRes[0])
+        }).catch(err => console.log('error deletingCity', err))
+    },
+    
+
     seed: (req, res) => {
         sequelize.query(`
             drop table if exists cities;
@@ -21,8 +61,7 @@ module.exports = {
                 name varchar
             );
 
-            *****YOUR CODE HERE*****
-
+            
             create table cities (
                city_id serial primary key,
                name varchar,
